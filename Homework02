@@ -1,0 +1,111 @@
+SELECT *
+FROM Student
+WHERE FirstName = 'Antonio'
+GO
+
+SELECT *
+FROM Student
+WHERE DateOfBirth > '19990101'
+GO
+
+SELECT *
+FROM Student
+WHERE Gender = 'M'
+GO
+
+SELECT *
+FROM Student
+WHERE LastName like 'T%'
+GO
+
+SELECT *
+FROM Student
+WHERE EnrolledDate >= '19980101' and  EnrolledDate < '19980201'
+GO
+
+SELECT *
+FROM Student
+WHERE EnrolledDate >= '19980101' and  EnrolledDate < '19980201'
+and LastName like 'J%'
+GO
+
+SELECT * 
+FROM Student
+WHERE FirstName = 'Antonio'
+Order by LastName
+GO
+
+SELECT *
+FROM Student
+Order by FirstName
+GO
+
+SELECT *
+FROM Student
+Where Gender = 'M'
+Order by EnrolledDate desc
+GO
+
+SELECT FirstName
+FROM Teacher
+UNION ALL
+SELECT FirstName 
+FROM dbo.Student
+GO
+
+SELECT Lastname
+FROM Teacher
+UNION
+SELECT LastName
+FROM dbo.Student
+GO
+
+SELECT FirstName
+FROM Teacher
+INTERSECT
+SELECT FirstName
+FROM dbo.Student
+GO
+
+ALTER TABLE GradeDetails
+ADD CONSTRAINT DF_Grade_Details
+DEFAULT 100 FOR [AchievementMaxPoints]
+GO
+
+ALTER TABLE [dbo].[GradeDetails] WITH CHECK
+ADD CONSTRAINT CHK_Grade_Details
+CHECK (AchievementPoints <= AchievementMaxPoints);
+GO
+
+--ALTER TABLE [dbo].[AchievementType] WITH CHECK
+--ADD CONSTRAINT UC_AchievementType_Name UNIQUE (Name)
+--GO
+
+ALTER TABLE [dbo].[Grade] 
+WITH CHECK ADD CONSTRAINT [FK_Teacher_ID]
+FOREIGN KEY ([TeacherID])
+REFERENCES [dbo].[Teacher]([ID])
+GO
+
+SELECT c.Name, a.Name
+FROM [dbo].Course c
+cross join dbo.AchievementType a
+GO
+
+SELECT DISTINCT t.FirstName, g.Grade
+FROM [dbo].Teacher t
+inner join dbo.Grade g on g.TeacherID = t.ID
+GO
+
+SELECT DISTINCT t.FirstName, g.Grade
+FROM [dbo].Teacher t
+inner join dbo.Grade g on g.TeacherID = t.ID
+WHERE t.ID is null
+GO
+
+SELECT s.FirstName
+FROM [dbo].Student s
+right join dbo.Grade g on g.StudentID = s.ID
+where g.StudentID is null
+GO
+
