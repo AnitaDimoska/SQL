@@ -78,14 +78,16 @@ GO
 
 DROP VIEW IF EXISTS vv_StudentGradeDetails; 
 GO 
-create view vv_StudentGradeDetails as 
-select s.FirstName, s.LastName, Count(g.CourseID) as CoursePassed
-from dbo.Student s
-inner join dbo.Grade g ON g.StudentID = s.ID
-inner join dbo.GradeDetails gd ON gd.GradeID = g.ID
-inner join dbo.AchievementType a ON gd.AchievementTypeID = a.ID
-where a.Name = 'Ispit' and gd.AchievementPoints >= a.ParticipationRate
-Group By s.FirstName, s.LastName
+CREATE VIEW vv_StudentGradeDetails
+AS
+SELECT s.FirstName, s.LastName, Count(g.CourseID) as CoursePassed
+FROM dbo.Student s
+inner join dbo.Grade g on g.StudentID = s.ID
+inner join dbo.GradeDetails gd on gd.GradeID = g.ID
+inner join dbo.AchievementType a on gd.AchievementTypeID = a.ID
+WHERE a.Name = 'Ispit' and gd.AchievementPoints >= a.ParticipationRate
+GROUP BY s.FirstName, s.LastName
 
-select * 
-from vv_StudentGradeDetails
+SELECT * 
+FROM vv_StudentGradeDetails
+GO
