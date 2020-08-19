@@ -1,0 +1,60 @@
+DECLARE @FirstName nvarchar(100)
+set @FirstName = 'Antonio'
+
+SELECT *
+FROM Student
+WHERE FirstName = @FirstName
+GO
+
+DECLARE @StudentList TABLE
+(StidentID int, FirstName nvarchar(50), LastName nvarchar(50))
+
+INSERT INTO @StudentList
+SELECT ID, FirstName, LastName
+FROM dbo.[Student]
+WHERE Gender = 'F'
+
+SELECT *
+FROM @StudentList
+GO
+
+CREATE TABLE #StudentListTemp
+(LastName nvarchar(50), EnrolledDate date)
+SELECT LastName, EnrolledDate
+FROM dbo. Student
+WHERE FirstName like 'A%' and Gender = 'M'
+GO
+
+SELECT *
+FROM #StudentListTemp
+WHERE LEN(LastName) = 7
+GO
+
+
+SELECT FirstName, LastName
+FROM dbo.Teacher
+WHERE LEN(FirstName) < 5 and Left(FirstName,3) = Left(LastName, 3)
+GO
+
+
+DROP FUNCTION IF EXISTS dbo.fn_FormatStudentName
+GO
+
+CREATE FUNCTION dbo.fn_FormatStudentName(@StudentID int)
+RETURNS nvarchar (3000)
+AS
+BEGIN
+
+DECLARE @Result nvarchar (3000)
+SELECT @Result = SUBSTRING(StudentCardNumber,4,5) + ' - ' + Left(FirstName, 1) + '.' + LastName
+FROM dbo.Student
+WHERE ID = @StudentID
+
+RETURN @Result
+
+END
+GO
+
+SELECT *,
+dbo.fn_FormatStudentName(ID) as Result
+FROM dbo.Student
