@@ -1,0 +1,25 @@
+DROP FUNCTION IF EXISTS dbo.fn_PassedStudents;
+GO
+
+CREATE FUNCTION dbo.fn_PassedStudents(@TeacherID smallint, @CourseID smallint)
+RETURNS @output TABLE (StudentFirstName nvarchar(50), StudentLastName nvarchar(50), Grade tinyint, CreatedDate datetime)
+AS
+BEGIN
+
+INSERT INTO @output
+SELECT s.FirstName as StudentFirstName, s.LastName as StudentLastName, g.Grade as Grade, g.CreatedDate as CreatedDate
+FROM dbo.Student s
+inner join dbo.Grade g on s.ID = g.StudentID
+WHERE g.TeacherID = @TeacherID
+and g.CourseID = @CourseID
+GROUP BY s.FirstName, s.LastName, g.Grade, g.CreatedDate
+
+RETURN
+END
+GO
+
+DECLARE @TeacherID smallint = 82
+DECLARE @CourseID smallint = 0
+
+SELECT *
+FROM dbo.fn_PassedStudents (@TeacherID, @CourseID)
