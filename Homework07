@@ -1,0 +1,40 @@
+DROP PROCEDURE IF EXISTS dbo.CreateGradeDetails
+GO
+
+CREATE PROCEDURE dbo.CreateGradeDetails
+(@GradeID int, @AchievementTypeID tinyint, @AchievementPoints tinyint, @AchievementMaxPoints tinyint, @AchievementDate datetime)
+AS
+BEGIN
+BEGIN TRY
+INSERT INTO dbo. [GradeDetails] (GradeID, AchievementTypeID, AchievementPoints, AchievementMaxPoints, AchievementDate)
+VALUES (@GradeID, @AchievementTypeID, @AchievementPoints, @AchievementMaxPoints, @AchievementDate)
+
+SELECT gd.AchievementPoints, gd.AchievementMaxPoints, at.ParticipationRate
+FROM dbo.[GradeDetails] gd
+inner join dbo.AchievementType as at on gd.AchievementTypeID = at.ID
+WHERE
+GradeID = @GradeID
+
+SELECT SUM(gd.AchievementPoints / gd.AchievementMaxPoints * at.ParticipationRate) as GradePoints
+FROM dbo.[GradeDetails] gd
+inner join dbo.AchievementType as at on gd.AchievementTypeID = at.ID
+WHERE gd.ID = @GradeID
+END TRY
+	BEGIN CATCH  
+		SELECT
+			ERROR_NUMBER() AS ErrorNumber  
+		,	ERROR_SEVERITY() AS ErrorSeverity  
+		,	ERROR_STATE() AS ErrorState  
+		,	ERROR_PROCEDURE() AS ErrorProcedure  
+		,	ERROR_LINE() AS ErrorLine  
+		,	ERROR_MESSAGE() AS ErrorMessage;  
+	END CATCH;
+END
+GO
+EXEC dbo.CreateGradeDetails @GradeId = 20130, @AchievementTypeID = 10, @AchievementPoints = 4, @AchievementMaxPoints = 100, @AchievementDate = '20200823'
+GO
+
+SELECT * 
+FROM dbo.GradeDetails
+ORDER BY ID ASC
+GO
