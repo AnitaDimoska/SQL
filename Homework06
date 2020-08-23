@@ -1,0 +1,28 @@
+DROP PROCEDURE IF EXISTS dbo.CreateGrade
+GO
+
+CREATE PROCEDURE dbo.CreateGrade(@StudentID int, @CourseID smallint, @TeacherID smallint, @Grade tinyint, @Comment nvarchar(100), @CreatedDate datetime)
+AS
+BEGIN
+
+INSERT INTO dbo.[Grade] (StudentID, CourseID, TeacherID, Grade, Comment, CreatedDate)
+VALUES (@StudentID, @CourseID, @TeacherID, @Grade, @Comment, @CreatedDate)
+
+SELECT COUNT(*) as TotalNumberOfGrades
+FROM dbo.[Grade] g
+WHERE StudentID = @StudentID
+
+SELECT MAX(Grade) as MaxGradeOfStudent
+FROM dbo.[Grade]
+WHERE StudentID = @StudentID and TeacherID = @TeacherID
+
+END
+GO
+
+EXEC dbo.[CreateGrade] @StudentID = 123, @CourseID = 1, @TeacherID = 5, @Grade = 7, @Comment = 'No comment', @CreatedDate = '20200823'
+
+SELECT *
+FROM dbo.[Grade]
+ORDER BY ID ASC
+GO
+
