@@ -26,3 +26,38 @@ FROM dbo.[Grade]
 ORDER BY ID ASC
 GO
 
+--Second part
+
+
+DROP PROCEDURE IF EXISTS dbo.CreateGradeDetails
+GO
+
+CREATE PROCEDURE dbo.CreateGradeDetails
+(@GradeID int, @AchievementTypeID tinyint, @AchievementPoints tinyint, @AchievementMaxPoints tinyint, @AchievementDate datetime)
+AS
+BEGIN
+
+INSERT INTO dbo. [GradeDetails] (GradeID, AchievementTypeID, AchievementPoints, AchievementMaxPoints, AchievementDate)
+VALUES (@GradeID, @AchievementTypeID, @AchievementPoints, @AchievementMaxPoints, @AchievementDate)
+
+SELECT gd.AchievementPoints, gd.AchievementMaxPoints, at.ParticipationRate
+FROM dbo.[GradeDetails] gd
+inner join dbo.AchievementType as at on gd.AchievementTypeID = at.ID
+WHERE
+GradeID = @GradeID
+
+SELECT SUM(gd.AchievementPoints / gd.AchievementMaxPoints * at.ParticipationRate) as GradePoints
+FROM dbo.[GradeDetails] gd
+inner join dbo.AchievementType as at on gd.AchievementTypeID = at.ID
+WHERE gd.ID = @GradeID
+
+END
+GO
+
+EXEC dbo.CreateGradeDetails @GradeId = 20130, @AchievementTypeID = 4, @AchievementPoints = 10, @AchievementMaxPoints = 100, @AchievementDate = '20200823'
+GO
+
+SELECT * 
+FROM dbo.GradeDetails
+ORDER BY ID ASC
+GO
